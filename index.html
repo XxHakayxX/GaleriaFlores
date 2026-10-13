@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️ Galeria de mi amor ❤️</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ffe1e8 0%, #fdfafb 50%, #f9cce0 100%);
+            background-attachment: fixed;
+            font-family: 'Poppins', sans-serif;
+            color: #4a4a4a;
+            overflow-x: hidden;
+        }
+
+        /* -------------------------------------------
+           PANTALLA DE INICIO (NEGRA CON ESTRELLAS)
+        -------------------------------------------- */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #030305;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 1.5s ease;
+            overflow: hidden;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle infinite alternate;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.5); box-shadow: 0 0 8px #fff; }
+        }
+
+        #typewriter-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: #fdfafb;
+            max-width: 900px;
+            line-height: 1.6;
+            font-weight: 400;
+            font-style: italic;
+            z-index: 10;
+            min-height: 120px; 
+            margin-bottom: 30px;
+        }
+
+        #typewriter-text::after {
+            content: '|';
+            animation: blink 0.8s infinite;
+            color: #f9cce0;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        #enter-btn {
+            display: none;
+            opacity: 0;
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            background: linear-gradient(45deg, #d87093, #ff69b4);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 10px 20px rgba(255, 105, 180, 0.4);
+            transition: transform 0.3s ease, opacity 1s ease;
+        }
+
+        #enter-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 15px 25px rgba(255, 105, 180, 0.6);
+        }
+
+        /* -------------------------------------------
+           FONDOS ANIMADOS DE LA GALERÍA
+        -------------------------------------------- */
+        #particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            bottom: -50px;
+            user-select: none;
+            animation: floatUp linear forwards;
+            opacity: 0.8;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+
+        /* -------------------------------------------
+           ESTILOS DE LA GALERÍA PRINCIPAL
+        -------------------------------------------- */
+        #main-content {
+            position: relative;
+            z-index: 1;
+            display: none; 
+        }
+
+        header {
+            text-align: center;
+            padding: 8vh 20px 4vh;
+            animation: fadeInDown 1.5s ease-out;
+        }
+
+        h1.gallery-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #d84b7b;
+            margin: 0 auto;
+            text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.7);
+        }
+
+        .gallery-container {
+            padding: 0 5vw 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .flower-card {
+            flex: 1 1 300px;
+            max-width: 500px;
+            height: 450px;
+            /* El contenedor ahora es transparente para no dejar huecos blancos horribles */
+            background: transparent; 
+            cursor: pointer;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out forwards;
+            
+            /* Centra la imagen a la perfección */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.4s ease;
+        }
+
+        .flower-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .flower-img {
+            /* Esto obliga a la foto a no salirse, pero mantiene sus medidas exactas sin crear vacíos */
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            
+            border-radius: 20px;
+            border: 4px solid #fff; /* Marquito fotográfico pegado a la imagen */
+            box-shadow: 0 10px 25px rgba(216, 75, 123, 0.15);
+            transition: transform 0.6s ease, box-shadow 0.4s ease;
+        }
+
+        .flower-card:hover .flower-img {
+            transform: scale(1.03);
+            box-shadow: 0 15px 35px rgba(216, 75, 123, 0.35);
+        }
+
+        /* -------------------------------------------
+           REPRODUCTOR DE AUDIO FLOTANTE
+        -------------------------------------------- */
+        #audio-container {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            z-index: 1000;
+            display: none;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            padding: 8px 12px;
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(216, 75, 123, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        #audio-container:hover {
+            transform: scale(1.05);
+        }
+
+        audio {
+            height: 35px;
+            outline: none;
+        }
+
+        /* -------------------------------------------
+           VENTANITA EMERGENTE (Modal)
+        -------------------------------------------- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 225, 232, 0.85);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 450px;
+            width: 85%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(216, 75, 123, 0.2);
+            transform: translateY(30px) scale(0.95);
+            transition: transform 0.4s ease;
+            position: relative;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 32px;
+            color: #d84b7b;
+            cursor: pointer;
+            border: none;
+            background: none;
+            transition: transform 0.3s;
+        }
+
+        .close-btn:hover {
+            transform: rotate(90deg) scale(1.2);
+        }
+
+        .modal-date {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: #c05c7e;
+            margin-bottom: 15px;
+            font-weight: bold;
+            border-bottom: 2px dashed #f9cce0;
+            padding-bottom: 10px;
+        }
+
+        .modal-reason {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #555;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🌟 PANTALLA INICIAL NEGRA -->
+    <div id="intro-screen">
+        <h1 id="typewriter-text"></h1>
+        <button id="enter-btn">Ver flores ❤️</button>
+    </div>
+
+    <!-- 🎵 REPRODUCTOR DE MÚSICA VISIBLE -->
+    <div id="audio-container">
+        <audio id="bg-music" loop controls>
+            <source src="cancion.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <!-- 🌸 CONTENIDO PRINCIPAL DE LA GALERÍA -->
+    <div id="main-content">
+        <div id="particles-container"></div>
+
+        <header>
+            <h1 class="gallery-title">❤️ Tus Flores ❤️</h1>
+        </header>
+
+        <div class="gallery-container" id="gallery">
+        </div>
+    </div>
+
+    <!-- 💬 VENTANITA DE DETALLES (Modal) -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <button class="close-btn" id="closeBtn">&times;</button>
+            <div class="modal-date" id="modalDate"></div>
+            <div class="modal-reason" id="modalReason"></div>
+        </div>
+    </div>
+
+    <script>
+        // --------------------------------------------------------
+        // 1. GENERAR ESTRELLAS EN LA PANTALLA NEGRA
+        // --------------------------------------------------------
+        const introScreen = document.getElementById('intro-screen');
+        for (let j = 0; j < 120; j++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            
+            const size = Math.random() * 3 + 1;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            
+            star.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+            star.style.animationDelay = (Math.random() * 2) + 's';
+            
+            introScreen.appendChild(star);
+        }
+
+        // --------------------------------------------------------
+        // 2. EFECTO DE MECANOGRAFÍA
+        // --------------------------------------------------------
+        const phrase = '"Las veces que la luna sintió envidia de la luz de tus ojos, y los atardeceres sintieron envidia de tu bella sonrisa."';
+        const typeText = document.getElementById('typewriter-text');
+        const enterBtn = document.getElementById('enter-btn');
+        let indexText = 0;
+        
+        function typeWriter() {
+            if (indexText < phrase.length) {
+                typeText.innerHTML += phrase.charAt(indexText);
+                indexText++;
+                setTimeout(typeWriter, 65); 
+            } else {
+                enterBtn.style.display = 'block';
+                setTimeout(() => { enterBtn.style.opacity = '1'; }, 100);
+            }
+        }
+        
+        window.onload = () => {
+            setTimeout(typeWriter, 500);
+        };
+
+        // --------------------------------------------------------
+        // 3. TRANSICIÓN A LA GALERÍA Y REPRODUCCIÓN DE MÚSICA
+        // --------------------------------------------------------
+        enterBtn.addEventListener('click', () => {
+            introScreen.style.opacity = '0';
+            
+            const audio = document.getElementById('bg-music');
+            audio.volume = 0.5; // Volumen inicial al 50%
+            audio.play().catch(e => console.log("Auto-play bloqueado, pero continuará al interactuar."));
+
+            setTimeout(() => {
+                introScreen.style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                document.getElementById('audio-container').style.display = 'block'; 
+                startParticles(); 
+            }, 1500);
+        });
+
+        // --------------------------------------------------------
+        // 4. ANIMACIÓN DE CORAZONES Y FLORES VOLANDO
+        // --------------------------------------------------------
+        const elementosFlotantes = ['❤️', '🌸', '💖', '✨', '🌻', '💕', '🌷', '💘'];
+        
+        function startParticles() {
+            const container = document.getElementById('particles-container');
+            
+            setInterval(() => {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.innerText = elementosFlotantes[Math.floor(Math.random() * elementosFlotantes.length)];
+                
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+                particle.style.animationDuration = (Math.random() * 6 + 6) + 's';
+                
+                container.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 12000); 
+            }, 350);
+        }
+
+        // --------------------------------------------------------
+        // 5. BASE DE DATOS DE LA GALERÍA
+        // --------------------------------------------------------
+        const misFlores = [
+            {
+                imagen: "img1.jpg", 
+                fecha: "21 de Septiembre, 2026",
+                razon: "Unos hermosos girasoles, para la luz de mi vida en el dia de las flores amarillas.🌸"
+            },
+            {
+                imagen: "img2.jpg",
+                fecha: "7 de Octubre, 2026",
+                razon: "Por bonita, deseandote lo mejor en tus clases mi abogada hermosa ❤️"
+            }
+        ];
+
+        // --------------------------------------------------------
+        // 6. RENDERIZAR LA GALERÍA
+        // --------------------------------------------------------
+        const gallery = document.getElementById('gallery');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalDate = document.getElementById('modalDate');
+        const modalReason = document.getElementById('modalReason');
+        const closeBtn = document.getElementById('closeBtn');
+
+        const floresMostrar = misFlores.slice(0, 20);
+
+        floresMostrar.forEach((flor, index) => {
+            const card = document.createElement('div');
+            card.className = 'flower-card';
+            
+            card.style.animationDelay = `${index * 0.15}s`; 
+
+            const img = document.createElement('img');
+            img.src = flor.imagen;
+            img.className = 'flower-img';
+            img.loading = 'lazy'; 
+
+            card.appendChild(img);
+            gallery.appendChild(card);
+
+            card.addEventListener('click', () => {
+                modalDate.textContent = flor.fecha;
+                modalReason.textContent = flor.razon;
+                modalOverlay.classList.add('active');
+            });
+        });
+
+        // --------------------------------------------------------
+        // 7. LÓGICA DE LA VENTANITA EMERGENTE
+        // --------------------------------------------------------
+        const closeModal = () => modalOverlay.classList.remove('active');
+        
+        closeBtn.addEventListener('click', closeModal);
+        
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeModal(); 
+        });
+    </script>
+</body>
+</html>
